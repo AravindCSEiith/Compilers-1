@@ -1,0 +1,48 @@
+factorial:                              # @factorial
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     dword ptr [rbp - 8], edi
+        cmp     dword ptr [rbp - 8], 0
+        jne     .LBB0_2
+        mov     dword ptr [rbp - 4], 1
+        jmp     .LBB0_5
+.LBB0_2:
+        cmp     dword ptr [rbp - 8], 1
+        jne     .LBB0_4
+        mov     dword ptr [rbp - 4], 1
+        jmp     .LBB0_5
+.LBB0_4:
+        mov     eax, dword ptr [rbp - 8]
+        mov     dword ptr [rbp - 12], eax       # 4-byte Spill
+        mov     edi, dword ptr [rbp - 8]
+        sub     edi, 1
+        call    factorial
+        mov     ecx, eax
+        mov     eax, dword ptr [rbp - 12]       # 4-byte Reload
+        imul    eax, ecx
+        mov     dword ptr [rbp - 4], eax
+.LBB0_5:
+        mov     eax, dword ptr [rbp - 4]
+        add     rsp, 16
+        pop     rbp
+        ret
+main:                                   # @main
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     dword ptr [rbp - 4], 0
+        mov     dword ptr [rbp - 8], 0
+        mov     edi, 10
+        call    factorial
+        mov     dword ptr [rbp - 8], eax
+        mov     esi, dword ptr [rbp - 8]
+        movabs  rdi, offset .L.str
+        mov     al, 0
+        call    printf
+        xor     eax, eax
+        add     rsp, 16
+        pop     rbp
+        ret
+.L.str:
+        .asciz  "Factorial of 10 = %d\n"

@@ -1,0 +1,42 @@
+power:                                  # @power
+        push    rbp
+        mov     rbp, rsp
+        mov     dword ptr [rbp - 4], edi
+        mov     dword ptr [rbp - 8], esi
+        mov     dword ptr [rbp - 12], 1
+        mov     dword ptr [rbp - 16], 0
+.LBB0_1:                                # =>This Inner Loop Header: Depth=1
+        mov     eax, dword ptr [rbp - 16]
+        cmp     eax, dword ptr [rbp - 8]
+        jae     .LBB0_4
+        mov     eax, dword ptr [rbp - 4]
+        imul    eax, dword ptr [rbp - 12]
+        mov     dword ptr [rbp - 12], eax
+        mov     eax, dword ptr [rbp - 16]
+        add     eax, 1
+        mov     dword ptr [rbp - 16], eax
+        jmp     .LBB0_1
+.LBB0_4:
+        mov     eax, dword ptr [rbp - 12]
+        pop     rbp
+        ret
+main:                                   # @main
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 16
+        mov     dword ptr [rbp - 4], 0
+        mov     dword ptr [rbp - 8], 0
+        mov     edi, 5
+        mov     esi, 6
+        call    power
+        mov     dword ptr [rbp - 8], eax
+        mov     esi, dword ptr [rbp - 8]
+        movabs  rdi, offset .L.str
+        mov     al, 0
+        call    printf
+        xor     eax, eax
+        add     rsp, 16
+        pop     rbp
+        ret
+.L.str:
+        .asciz  "5 to the power 6 = %d\n"

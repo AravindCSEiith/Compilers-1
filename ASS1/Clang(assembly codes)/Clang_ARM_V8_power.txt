@@ -1,0 +1,47 @@
+power:                                  // @power
+        sub     sp, sp, #16                     // =16
+        str     w0, [sp, #12]
+        str     w1, [sp, #8]
+        mov     w8, #1
+        str     w8, [sp, #4]
+        str     wzr, [sp]
+.LBB0_1:                                // =>This Inner Loop Header: Depth=1
+        ldr     w8, [sp]
+        ldr     w9, [sp, #8]
+        subs    w8, w8, w9
+        b.hs    .LBB0_4
+        ldr     w8, [sp, #12]
+        ldr     w9, [sp, #4]
+        mul     w8, w9, w8
+        str     w8, [sp, #4]
+        ldr     w8, [sp]
+        add     w8, w8, #1                      // =1
+        str     w8, [sp]
+        b       .LBB0_1
+.LBB0_4:
+        ldr     w0, [sp, #4]
+        add     sp, sp, #16                     // =16
+        ret
+main:                                   // @main
+        sub     sp, sp, #32                     // =32
+        stp     x29, x30, [sp, #16]             // 16-byte Folded Spill
+        add     x29, sp, #16                    // =16
+        mov     w8, wzr
+        stur    wzr, [x29, #-4]
+        str     wzr, [sp, #8]
+        mov     w0, #5
+        mov     w1, #6
+        str     w8, [sp, #4]                    // 4-byte Folded Spill
+        bl      power
+        str     w0, [sp, #8]
+        ldr     w1, [sp, #8]
+        adrp    x0, .L.str
+        add     x0, x0, :lo12:.L.str
+        bl      printf
+        ldr     w8, [sp, #4]                    // 4-byte Folded Reload
+        mov     w0, w8
+        ldp     x29, x30, [sp, #16]             // 16-byte Folded Reload
+        add     sp, sp, #32                     // =32
+        ret
+.L.str:
+        .asciz  "5 to the power 6 = %d\n"
